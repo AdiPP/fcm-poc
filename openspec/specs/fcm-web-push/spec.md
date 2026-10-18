@@ -1,4 +1,10 @@
-## ADDED Requirements
+# FCM Web Push
+
+## Purpose
+
+End-to-end web push proof-of-concept using Firebase Cloud Messaging: token registration, sending a notification to a registered token or topic, foreground in-app display, and background OS notification display via service worker. Scope is deliberately small and self-contained so FCM mechanics can be learned and validated before reuse in larger systems.
+
+## Requirements
 
 ### Requirement: Client obtains an FCM registration token
 

@@ -1,3 +1,12 @@
 .omp/
 .opencode/
 openspec/changes/archive/
+
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+serviceAccount.json
+.playwright-mcp/
+brave-*.png

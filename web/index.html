@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FCM Web Push POC</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+      section { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+      input { width: 100%; box-sizing: border-box; margin: .25rem 0; }
+      button { margin: .25rem 0; }
+      #token { word-break: break-all; font-family: monospace; background: #f4f4f4; padding: .5rem; }
+      #toast { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+               background: #222; color: #fff; padding: .75rem 1rem; border-radius: 8px;
+               opacity: 0; transition: opacity .3s; pointer-events: none; }
+      #toast.show { opacity: 1; }
+      .muted { color: #777; font-size: .9rem; }
+    </style>
+  </head>
+  <body>
+    <h1>FCM Web Push POC</h1>
+
+    <section>
+      <h2>1. Enable notifications</h2>
+      <p class="muted">Permission state: <span id="permission"></span> · SW scope: <span id="scope"></span></p>
+      <button id="enable">Enable notifications</button>
+      <p class="muted">Reset a permanently-denied prompt via the lock/info icon at the left of the address bar (Site settings &gt; Notifications &gt; Allow).</p>
+      <pre id="token">no token yet</pre>
+      <input id="topic" placeholder="topic to subscribe to (optional, e.g. news)" />
+      <button id="subscribe">Subscribe token to topic</button>
+    </section>
+
+    <section>
+      <h2>2. Send a message</h2>
+      <input id="target" placeholder="target token (blank = use topic or broadcast to all registered)" />
+      <input id="sendTopic" placeholder="topic (blank = target token / broadcast)" />
+      <input id="title" placeholder="title" value="Hello" />
+      <input id="body" placeholder="body" value="from the POC sender" />
+      <button id="send">Send</button>
+      <p class="muted" id="sendResult"></p>
+      <p class="muted">Foreground = arrives while this tab is focused → in-app toast below. Background = tab hidden/closed → OS notification from the service worker.</p>
+    </section>
+
+    <div id="toast"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
