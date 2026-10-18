@@ -8,16 +8,16 @@ TBD - created by archiving change mvc-rewrite. Update Purpose after archive.
 The sender SHALL separate HTTP adaptation (controllers + routes), business logic (service), persistence access (repository + model), cross-cutting auth (middleware), response shaping (views), and wiring (composition root), with dependencies flowing one way: routes → controllers → service → repository → model.
 
 #### Scenario: Composition root preserves the factory contract
-- **WHEN** any consumer imports `createApp` from `server/src/app.js` with `{ messaging, tokens, devSecret }`
-- **THEN** it receives an Express app exposing `POST /register-token`, `POST /subscribe`, `POST /send`, and `GET /tokens` with unchanged behavior, and the passed-in `tokens` Set remains the live store
+- **WHEN** any consumer imports `create_app` from `server/src/app.py` with `{ messaging, tokens, dev_secret }`
+- **THEN** it receives a FastAPI app exposing `POST /register-token`, `POST /subscribe`, `POST /send`, and `GET /tokens` with unchanged behavior, and the passed-in `tokens` set remains the live store
 
 #### Scenario: One-way layer dependencies
 - **WHEN** the sender source is inspected
-- **THEN** controllers never import the token store directly, the service never touches `req`/`res`, the repository is the only module that reads/writes the store, and response shapes are constructed only in `views/responses.js`
+- **THEN** controllers never import the token store directly, the service never touches `request`/`response`, the repository is the only module that reads/writes the store, and response shapes are constructed only in `views/responses.py`
 
 #### Scenario: Admin SDK init lives in infrastructure
-- **WHEN** the app boots via `server/src/index.js`
-- **THEN** Firebase Admin is initialized from `infrastructure/firebase.js` (with `fcm.js` retained as a re-export), and `app.js` never imports Admin SDK modules directly
+- **WHEN** the app boots via `server/src/main.py`
+- **THEN** Firebase Admin is initialized from `infrastructure/firebase.py` (with `fcm.js` retained as a re-export), and `app.py` never imports Admin SDK modules directly
 
 ### Requirement: Web client follows layered MVC structure
 
@@ -39,9 +39,9 @@ The web client SHALL separate user-flow orchestration (controllers), state and s
 
 The rewrite SHALL preserve every contract pinned by `fcm-web-push`: route paths, HTTP status codes (200/400/401/404/502), response shapes (`{ok:true}`, `{messageId}`, `{sent,failed}`, `{count}`), idempotent registration, dev-secret gating (unset secret denies everything), permission-on-click flow, foreground-toast vs background-notification split, and topic stretch behavior.
 
-#### Scenario: Existing sender tests pass unmodified
-- **WHEN** `node --test` runs in `server/`
-- **THEN** all 5 pre-existing tests pass with no modifications to `server/test/app.test.js`
+#### Scenario: Existing sender tests pass (ported)
+- **WHEN** `pytest` runs in `server/`
+- **THEN** all ported scenarios (registration idempotency, dev-secret gating, valid/invalid token send + prune, broadcast counts + prune, topic subscribe) pass
 
 #### Scenario: Web build stays clean
 - **WHEN** `vite build` runs in `web/`

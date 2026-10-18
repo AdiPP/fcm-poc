@@ -3,7 +3,7 @@
 Minimal end-to-end Firebase Cloud Messaging web push loop:
 
 ```
-web/ (Vite + Firebase JS SDK)          server/ (Express + firebase-admin)
+web/ (Vite + Firebase JS SDK)          server/ (FastAPI + firebase-admin)
   getToken() ── /register-token ──────►  in-memory token Set
   send form ── /send (X-Dev-Secret) ──►  admin messaging.send() ──► FCM ──► browser
 ```
@@ -12,7 +12,8 @@ Foreground message → page `onMessage` toast. Background message → `firebase-
 
 ## Prerequisites
 
-- Node.js 22+ (uses `--env-file-if-exists`)
+- Node.js 22+ for the web client (uses `--env-file-if-exists`)
+- Python 3.12+ and [uv](https://docs.astral.sh/uv/) for the sender
 - A Firebase project with **Cloud Messaging enabled**, one **Web app**, and a **Web Push certificate (VAPID) key pair**
 
 ## Firebase console setup
@@ -28,7 +29,7 @@ Foreground message → page `onMessage` toast. Background message → `firebase-
 ```bash
 cp .env.example .env                 # fill DEV_SECRET, VITE_FIREBASE_*, VITE_VAPID_KEY, VITE_DEV_SECRET (= DEV_SECRET)
 # serviceAccount.json goes in server/ (gitignored)
-cd server && npm install && npm run dev   # reads ../.env (run from server/)
+cd server && uv sync && uv run python -m src.main   # reads ../.env (run from server/)
 
 cd web && npm install && npm run dev      # http://localhost:5173 (reads ../.env via envDir)
 ```
@@ -56,7 +57,7 @@ Permission permanently denied? Address bar → site info icon → Site settings 
 ## Automated checks
 
 ```bash
-cd server && npm test        # sender logic (registration, 401, invalid-token removal, broadcast) — no Firebase needed
+cd server && uv run pytest   # sender logic (registration, 401, invalid-token removal, broadcast) — no Firebase needed
 ```
 
 ## Run with Docker

@@ -4,6 +4,10 @@ openspec/changes/archive/
 
 node_modules/
 dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
 .env
 .env.*
 !.env.example
