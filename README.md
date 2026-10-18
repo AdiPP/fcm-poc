@@ -5,7 +5,7 @@ Minimal end-to-end Firebase Cloud Messaging web push loop:
 ```
 web/ (Vite + Firebase JS SDK)          server/ (FastAPI + firebase-admin)
   getToken() ── /register-token ──────►  in-memory token Set
-  send form ── /send (X-Dev-Secret) ──►  admin messaging.send() ──► FCM ──► browser
+  send form ── /send ──►  admin messaging.send() ──► FCM ──► browser
 ```
 
 Foreground message → page `onMessage` toast. Background message → `firebase-messaging-sw.js` `onBackgroundMessage` → OS notification.
@@ -27,7 +27,7 @@ Foreground message → page `onMessage` toast. Background message → `firebase-
 ## Run
 
 ```bash
-cp .env.example .env                 # fill DEV_SECRET, VITE_FIREBASE_*, VITE_VAPID_KEY, VITE_DEV_SECRET (= DEV_SECRET)
+cp .env.example .env                 # fill VITE_FIREBASE_*, VITE_VAPID_KEY
 # serviceAccount.json goes in server/ (gitignored)
 cd server && uv sync && uv run python -m src.main   # reads ../.env (run from server/)
 
@@ -43,12 +43,10 @@ Service workers need a secure context; `localhost` qualifies. Anywhere else need
 1. **Foreground toast** — open the page in one focused tab, fill the send form, click Send → in-app toast appears (no OS notification).
 2. **Background notification** — minimize/close the tab, trigger a send (second tab, or curl below) → OS notification appears.
 3. **Invalid token removed** — register, then restart `server` and send to an old token copy → 404 `token invalid, removed from store`.
-4. **Missing dev secret → 401**:
+4. **Broadcast to all**:
    ```bash
    curl -i -X POST localhost:3000/send -H 'content-type: application/json' \
-     -d '{"token":"x","title":"a","body":"b"}'          # 401
-   curl -i -X POST localhost:3000/send -H 'content-type: application/json' \
-     -H "X-Dev-Secret: $DEV_SECRET" -d '{"title":"a","body":"b"}'   # broadcast to all
+     -d '{"title":"a","body":"b"}'   # broadcast to all registered tokens
    ```
 5. **(Stretch) Topic** — click *Subscribe token to topic* with `news`, then send with only the topic field → message arrives.
 
@@ -57,13 +55,13 @@ Permission permanently denied? Address bar → site info icon → Site settings 
 ## Automated checks
 
 ```bash
-cd server && uv run pytest   # sender logic (registration, 401, invalid-token removal, broadcast) — no Firebase needed
+cd server && uv run pytest   # sender logic (registration, invalid-token removal, broadcast) — no Firebase needed
 ```
 
 ## Run with Docker
 
 ```bash
-cp .env.example .env                 # fill DEV_SECRET, VITE_FIREBASE_*, VITE_VAPID_KEY, VITE_DEV_SECRET
+cp .env.example .env                 # fill VITE_FIREBASE_*, VITE_VAPID_KEY
 # add server/serviceAccount.json and configure web/public/firebase-messaging-sw.js
 docker compose up
 ```
@@ -72,4 +70,4 @@ Open http://localhost:5173. The web container proxies `/send` etc. to the server
 
 ## Non-goals / next steps
 
-In-memory store dies on restart — swap for SQLite if needed. No retry/backoff, rate limiting, or real auth (`X-Dev-Secret` is a shared string, POC only; `VITE_DEV_SECRET` ships in the client bundle).
+In-memory store dies on restart — swap for SQLite if needed. No retry/backoff, rate limiting, or auth (POC only; sender is an open relay — do not expose publicly).

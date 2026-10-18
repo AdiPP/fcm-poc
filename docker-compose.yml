@@ -1,7 +1,7 @@
 # Run the FCM POC stack in containers.
 #
 # Prerequisites (one-time, on the host):
-#   cp .env.example .env                       # fill in Firebase config, VAPID key, DEV_SECRET
+#   cp .env.example .env                       # fill in Firebase config, VAPID key
 #   # place Firebase service account at server/serviceAccount.json
 #   # edit the six REPLACE_ME values in web/public/firebase-messaging-sw.js
 # Then: docker compose up

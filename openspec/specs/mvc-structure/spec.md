@@ -5,10 +5,10 @@ TBD - created by archiving change mvc-rewrite. Update Purpose after archive.
 ## Requirements
 ### Requirement: Sender follows layered MVC structure
 
-The sender SHALL separate HTTP adaptation (controllers + routes), business logic (service), persistence access (repository + model), cross-cutting auth (middleware), response shaping (views), and wiring (composition root), with dependencies flowing one way: routes → controllers → service → repository → model.
+The sender SHALL separate HTTP adaptation (controllers + routes), business logic (service), persistence access (repository + model), response shaping (views), and wiring (composition root), with dependencies flowing one way: routes → controllers → service → repository → model.
 
 #### Scenario: Composition root preserves the factory contract
-- **WHEN** any consumer imports `create_app` from `server/src/app.py` with `{ messaging, tokens, dev_secret }`
+- **WHEN** any consumer imports `create_app` from `server/src/app.py` with `{ messaging, tokens }`
 - **THEN** it receives a FastAPI app exposing `POST /register-token`, `POST /subscribe`, `POST /send`, and `GET /tokens` with unchanged behavior, and the passed-in `tokens` set remains the live store
 
 #### Scenario: One-way layer dependencies
@@ -29,7 +29,7 @@ The web client SHALL separate user-flow orchestration (controllers), state and s
 
 #### Scenario: All server communication flows through the API model
 - **WHEN** any controller needs the sender (`/register-token`, `/subscribe`, `/send`)
-- **THEN** it calls `models/apiClient.js`, which attaches `content-type: application/json` (plus `X-Dev-Secret` from `VITE_DEV_SECRET` for `/subscribe` and `/send`), and no controller constructs fetch headers inline
+- **THEN** it calls `models/apiClient.js`, which attaches `content-type: application/json`, and no controller constructs fetch headers inline
 
 #### Scenario: All DOM access flows through the view
 - **WHEN** any controller renders state (token, permission, scope, toast, send result)

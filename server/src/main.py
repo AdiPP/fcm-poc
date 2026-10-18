@@ -7,7 +7,7 @@ from .app import create_app
 
 
 def main() -> None:
-    app = create_app(messaging=messaging, dev_secret=env.dev_secret)
+    app = create_app(messaging=messaging)
     uvicorn.run(app, host="0.0.0.0", port=env.port)
 
 

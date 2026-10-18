@@ -38,12 +38,12 @@ def messaging():
 
 @pytest.fixture
 def make_client():
-    def _make(messaging=None, tokens=None, dev_secret="s"):
+    def _make(messaging=None, tokens=None):
         if messaging is None:
             messaging = stub_messaging()
         if tokens is None:
             tokens = create_token_store()
-        app = create_app(messaging=messaging, tokens=tokens, dev_secret=dev_secret)
+        app = create_app(messaging=messaging, tokens=tokens)
         return TestClient(app), messaging, tokens
 
     return _make
