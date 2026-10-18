@@ -1,5 +1,9 @@
 """Ported sender scenarios (no Firebase credentials needed)."""
+import pytest
+
 from src.models.token_store import create_token_store
+
+pytestmark = pytest.mark.unit
 
 
 def test_registration_is_idempotent_store_exposed_via_tokens(make_client):

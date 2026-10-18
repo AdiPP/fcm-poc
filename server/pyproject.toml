@@ -20,3 +20,7 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "unit: deterministic tests without Firebase credentials",
+    "integration: live-FCM tests, run only when FCM_INTEGRATION=1",
+]

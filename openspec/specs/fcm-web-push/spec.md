@@ -32,19 +32,23 @@ The web client SHALL send its FCM registration token to the sender's `/register-
 
 ### Requirement: Sender sends a notification to a registered token
 
-The sender SHALL expose `POST /send` that accepts `{ token, title, body }` (or `{ topic, title, body }`) and delivers an FCM notification message via the Admin SDK, returning the FCM message id on success.
+The sender SHALL expose `POST /send` that accepts `{ token, title, body }` (or `{ topic, title, body }`, or `{ title, body }` for broadcast) and delivers an FCM notification message via the Admin SDK, returning the FCM message id on success (or `{ sent, failed }` for broadcast).
 
 #### Scenario: Send to a valid token
-- **WHEN** an authenticated request provides a valid registered token, title, and body
+- **WHEN** a request provides a valid registered token, title, and body
 - **THEN** the sender calls `admin.messaging().send()` and responds 200 with `{ messageId }`
 
 #### Scenario: Send to an invalid token
 - **WHEN** the target token is invalid or unregistered
 - **THEN** the sender responds with an error status and removes the token from the store
 
-#### Scenario: Missing dev secret
-- **WHEN** a request to `/send` omits or mismatches the `X-Dev-Secret` header
-- **THEN** the sender responds 401 and does not send any message
+#### Scenario: Broadcast to all registered tokens
+- **WHEN** a request provides title and body with no token and no topic
+- **THEN** the sender sends to every token in the store and responds 200 with `{ sent, failed }`, pruning dead tokens
+
+#### Scenario: Send to a topic
+- **WHEN** a request provides topic, title, and body
+- **THEN** the sender calls `admin.messaging().send()` with the topic and responds 200 with `{ messageId }`
 
 ### Requirement: Client displays foreground messages
 

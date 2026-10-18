@@ -1,5 +1,9 @@
 """Ported broadcast prune scenario."""
+import pytest
+
 from src.models.token_store import create_token_store
+
+pytestmark = pytest.mark.unit
 
 
 def test_broadcast_prunes_dead_tokens_and_reports_counts(make_client):
