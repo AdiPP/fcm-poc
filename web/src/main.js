@@ -2,11 +2,10 @@ import { onMessage } from 'firebase/messaging';
 import { initFirebase } from './config/firebase.js';
 import { registerServiceWorker } from './services/swRegistration.js';
 import { getPermission } from './models/permissionModel.js';
-import { getToken, setToken } from './models/tokenModel.js';
 import * as view from './views/domView.js';
 import { createNotificationController } from './controllers/notificationController.js';
 import { createSubscriptionController } from './controllers/subscriptionController.js';
-import { createSendController } from './controllers/sendController.js';
+import { createSendCardController } from './controllers/sendCardController.js';
 
 const { messaging } = initFirebase();
 
@@ -25,13 +24,20 @@ const swReady = registerServiceWorker()
 
 // Foreground: onMessage fires while the tab is focused — render in-app, no OS notification.
 onMessage(messaging, (payload) => {
-  view.showToast(`(foreground) ${payload.notification?.title ?? ''}: ${payload.notification?.body ?? ''}`);
+  view.showToast(`(foreground) ${payload.notification?.title ?? ''}: ${payload.notification?.body ?? ''}`, import.meta.env.DEV ? 15000 : 4000);
 });
 
 const notificationController = createNotificationController({ messaging, swReady });
 const subscriptionController = createSubscriptionController();
-const sendController = createSendController();
 
 view.refs.enable.onclick = () => notificationController.enable();
 view.refs.subscribe.onclick = () => subscriptionController.subscribe();
-view.refs.send.onclick = () => sendController.send();
+
+// Three always-visible per-mode test cards.
+const tokenCard = createSendCardController('token');
+const topicCard = createSendCardController('topic');
+const broadcastCard = createSendCardController('broadcast');
+
+view.refs.testToken.onclick = () => tokenCard.run();
+view.refs.testTopic.onclick = () => topicCard.run();
+view.refs.testBroadcast.onclick = () => broadcastCard.run();

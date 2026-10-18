@@ -13,4 +13,6 @@ __pycache__/
 !.env.example
 serviceAccount.json
 .playwright-mcp/
+test-results/
+playwright-report/
 brave-*.png

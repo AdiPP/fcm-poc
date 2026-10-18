@@ -31,14 +31,31 @@
     </section>
 
     <section>
-      <h2>2. Send a message</h2>
-      <input id="target" placeholder="target token (blank = use topic or broadcast to all registered)" />
-      <input id="sendTopic" placeholder="topic (blank = target token / broadcast)" />
-      <input id="title" placeholder="title" value="Hello" />
-      <input id="body" placeholder="body" value="from the POC sender" />
-      <button id="send">Send</button>
-      <p class="muted" id="sendResult"></p>
-      <p class="muted">Foreground = arrives while this tab is focused → in-app toast below. Background = tab hidden/closed → OS notification from the service worker.</p>
+      <h2>2. Testing token</h2>
+      <p class="muted">Sends to the currently registered token (enable notifications first). Foreground = arrives while this tab is focused → in-app toast below. Background = tab hidden/closed → OS notification from the service worker.</p>
+      <input id="tokenTitle" data-testid="token-title" placeholder="title" value="test-token" />
+      <input id="tokenBody" data-testid="token-body" placeholder="body" value="from the POC test card" />
+      <button id="testToken" data-testid="test-token">Send to registered token</button>
+      <pre id="tokenResult" data-testid="token-result">(no result yet)</pre>
+    </section>
+
+    <section>
+      <h2>3. Testing topic</h2>
+      <p class="muted">Subscribes the registered token to the topic, then sends to it.</p>
+      <input id="topicName" data-testid="topic-name" placeholder="topic" value="poc-test" />
+      <input id="topicTitle" data-testid="topic-title" placeholder="title" value="test-topic" />
+      <input id="topicBody" data-testid="topic-body" placeholder="body" value="from the POC test card" />
+      <button id="testTopic" data-testid="test-topic">Subscribe + send to topic</button>
+      <pre id="topicResult" data-testid="topic-result">(no result yet)</pre>
+    </section>
+
+    <section>
+      <h2>4. Testing broadcast</h2>
+      <p class="muted">Sends to every registered token (no target).</p>
+      <input id="broadcastTitle" data-testid="broadcast-title" placeholder="title" value="test-broadcast" />
+      <input id="broadcastBody" data-testid="broadcast-body" placeholder="body" value="from the POC test card" />
+      <button id="testBroadcast" data-testid="test-broadcast">Broadcast to all registered</button>
+      <pre id="broadcastResult" data-testid="broadcast-result">(no result yet)</pre>
     </section>
 
     <div id="toast"></div>
